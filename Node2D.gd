@@ -9,12 +9,14 @@ const Occupant=preload("res://Occupant.gd")
 const Background=preload("res://Background.gd")
 const viewport_width:int=2048;
 const viewport_height:int=1024;
+const camera_area_width:int=viewport_width/2
+const camera_area_height:int=viewport_height
 var map:Array=[]
 const cell_size:int=8*2*4
 const width:int=32
 const height:int=16
 var camera_position:Vector2=Vector2(0,0)
-var camera_size:Vector2=Vector2(viewport_width/cell_size,viewport_height/cell_size)
+var camera_size:Vector2=Vector2(camera_area_width/cell_size as float,camera_area_height/cell_size as float)
 const WARRIOR1_TEXTURE=preload("res://warrior1.png")
 const BACKGROUND1_TEXTURE:Texture=preload("res://background1.png")
 
@@ -23,21 +25,22 @@ func create_map()->void:
 		map.append([])
 		for y in range(height):
 			map[x].append(Cell.new(x,y))
-	var cell:Cell=map[8][4]
+	var cell:Cell=map[4][4]
 	cell.occupant=Occupant.new(Occupant.Type.WARRIOR1)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	get_tree().set_screen_stretch(SceneTree.STRETCH_MODE_VIEWPORT,SceneTree.STRETCH_ASPECT_KEEP,Vector2(1024, 512))
+	get_tree().set_screen_stretch(SceneTree.STRETCH_MODE_VIEWPORT,SceneTree.STRETCH_ASPECT_KEEP,Vector2(viewport_width,viewport_height))
 	#OS.set_window_fullscreen(true)
 	#get_viewport().set_size(Vector2(256,128))
 	print(OS.get_window_size())
 	print(get_viewport().get_size())
+	print(camera_size)
 	create_map()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	
 	pass
 
@@ -53,6 +56,7 @@ func to_map_coords(x:int,y:int)->Vector2:
 	return Vector2(x,y)
 
 func _draw():
+	draw_rect(Rect2(0,0,viewport_width,viewport_height),Color("#14213d"))
 	for x in range(camera_position.x,camera_position.x+camera_size.x):
 		for y in range(camera_position.y,camera_position.y+camera_size.y):
 			var texture:Texture
